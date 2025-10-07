@@ -21,3 +21,11 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    selective.transformer.array_transformer:
+        class: Selective\Transformer\ArrayTransformer
+        arguments:
+            $transformer: null
+
+
+    Selective\Transformer\ArrayTransformer: '@selective.transformer.array_transformer'

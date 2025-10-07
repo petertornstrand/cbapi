@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "993f63c17904b834a8973815ddd0929b",
+    "content-hash": "cbc0b5170113847f7ad0361fe239527c",
     "packages": [
         {
             "name": "psr/cache",
@@ -207,6 +207,58 @@
                 "source": "https://github.com/php-fig/log/tree/3.0.2"
             },
             "time": "2024-09-11T13:17:53+00:00"
+        },
+        {
+            "name": "selective/transformer",
+            "version": "1.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/selective-php/transformer.git",
+                "reference": "b6dd72d38b587be5f5f81d0fec418cb788d8ab19"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/selective-php/transformer/zipball/b6dd72d38b587be5f5f81d0fec418cb788d8ab19",
+                "reference": "b6dd72d38b587be5f5f81d0fec418cb788d8ab19",
+                "shasum": ""
+            },
+            "require": {
+                "php": "8.1.* || 8.2.* || 8.3.* || 8.4.*"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3",
+                "phpstan/phpstan": "^1 || ^2",
+                "phpunit/phpunit": "^10",
+                "squizlabs/php_codesniffer": "^3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Selective\\Transformer\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A strictly typed array transformer with dot-access, fluent interface and filters.",
+            "homepage": "https://github.com/selective-php/transformer",
+            "keywords": [
+                "array",
+                "converter",
+                "dot",
+                "dot-access",
+                "hydator",
+                "json",
+                "mapper",
+                "transformer",
+                "typed"
+            ],
+            "support": {
+                "issues": "https://github.com/selective-php/transformer/issues",
+                "source": "https://github.com/selective-php/transformer/tree/1.4.0"
+            },
+            "time": "2025-06-03T18:22:59+00:00"
         },
         {
             "name": "symfony/cache",
