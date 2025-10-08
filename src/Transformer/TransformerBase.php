@@ -13,7 +13,7 @@ use Selective\Transformer\ArrayTransformer;
  * data transformers. It initializes with a provided ArrayTransformer and
  * pre-registers custom filters for data processing.
  */
-abstract class TransformerBase
+abstract class TransformerBase implements TransformerInterface
 {
 
     /**
@@ -28,8 +28,8 @@ abstract class TransformerBase
     }
 
     /**
-     * Transforms the given SimpleXMLElement object into an array.
+     * @inheritDoc
      */
-    abstract function transform(mixed $data): array;
+    abstract function transform(array $data): array;
 
 }

@@ -4,6 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
+    cbapi_key: '%env(CBAPI_KEY)%'
     cb.base_url: '%env(CB_BASE_URL)%'
     cb.username: '%env(CB_USERNAME)%'
     cb.api_key: '%env(CB_API_KEY)%'
