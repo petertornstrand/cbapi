@@ -42,13 +42,13 @@ class ApiController extends AbstractController
         try {
             $this->authorize($request);
             $context = (object) [
-                'ticket' => json_decode($this->ticket($project, $ticketId)->getContent()),
-                'assignments' => json_decode($this->assignments($project)->getContent()),
-                'statuses' => json_decode($this->statuses($project)->getContent()),
-                'priorities' => json_decode($this->priorities($project)->getContent()),
-                'categories' => json_decode($this->categories($project)->getContent()),
-                'types' => json_decode($this->types($project)->getContent()),
-                'comments' => json_decode($this->comments($project, $ticketId)->getContent()),
+                'ticket' => json_decode($this->ticket($request, $project, $ticketId)->getContent()),
+                'assignments' => json_decode($this->assignments($request, $project)->getContent()),
+                'statuses' => json_decode($this->statuses($request, $project)->getContent()),
+                'priorities' => json_decode($this->priorities($request, $project)->getContent()),
+                'categories' => json_decode($this->categories($request, $project)->getContent()),
+                'types' => json_decode($this->types($request, $project)->getContent()),
+                'comments' => json_decode($this->comments($request, $project, $ticketId)->getContent()),
                 'links' => null,
             ];
             $context->links = $this->extractTicketLinks($context->comments);

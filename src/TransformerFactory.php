@@ -34,7 +34,7 @@ class TransformerFactory {
         $classDirectory = $this->directory . '/src/Transformer';
         $cacheDirectory = $this->directory . '/var/cache/' . $this->environment;
         $transformers = Discover::in($classDirectory)->withCache(
-            'transformer-discovery',
+            'transformer_discovery',
             new FileDiscoverCacheDriver($cacheDirectory)
         )->classes()->withAttribute(Transformer::class)->get();
         foreach ($transformers as $transformer) {

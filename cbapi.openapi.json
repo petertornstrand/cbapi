@@ -1,0 +1,1307 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Codebase API Gateway",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/{project}/tickets": {
+      "get": {
+        "summary": "Get all tickets",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "ki-profile",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "description": "",
+            "example": "{{api_key}}",
+            "schema": {
+              "type": "string",
+              "default": "{{api_key}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "summary": {
+                        "type": "string"
+                      },
+                      "reporter": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "username": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "username"
+                        ]
+                      },
+                      "assignee": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "username": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "username"
+                        ]
+                      },
+                      "category": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      },
+                      "priority": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "color": {
+                            "type": "string"
+                          },
+                          "default": {
+                            "type": "boolean"
+                          },
+                          "order": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color",
+                          "default",
+                          "order"
+                        ]
+                      },
+                      "status": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "color": {
+                            "type": "string"
+                          },
+                          "order": {
+                            "type": "integer"
+                          },
+                          "treatAsClosed": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color",
+                          "order",
+                          "treatAsClosed"
+                        ]
+                      },
+                      "type": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "icon": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "icon"
+                        ]
+                      },
+                      "milestone": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "parentId": {
+                            "type": "null"
+                          },
+                          "guid": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "startDate": {
+                            "type": "string"
+                          },
+                          "endDate": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "responsibleUserId": {
+                            "type": "integer"
+                          },
+                          "estimatedTime": {
+                            "type": "integer"
+                          },
+                          "status": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "parentId",
+                          "guid",
+                          "name",
+                          "startDate",
+                          "endDate",
+                          "description",
+                          "responsibleUserId",
+                          "estimatedTime",
+                          "status"
+                        ]
+                      },
+                      "startDate": {
+                        "type": "null"
+                      },
+                      "endDate": {
+                        "type": "null"
+                      },
+                      "tags": {
+                        "type": "string"
+                      },
+                      "updated": {
+                        "type": "string"
+                      },
+                      "created": {
+                        "type": "string"
+                      },
+                      "estimatedTime": {
+                        "type": "null"
+                      },
+                      "spentTime": {
+                        "type": "integer"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "summary",
+                      "reporter",
+                      "assignee",
+                      "category",
+                      "priority",
+                      "status",
+                      "type",
+                      "milestone",
+                      "startDate",
+                      "endDate",
+                      "tags",
+                      "updated",
+                      "created",
+                      "estimatedTime",
+                      "spentTime"
+                    ]
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/{project}/ticket/{ticket}": {
+      "get": {
+        "summary": "Get ticket",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "ki-profile",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ticket",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "3446",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "description": "",
+            "example": "{{api_key}}",
+            "schema": {
+              "type": "string",
+              "default": "{{api_key}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "summary": {
+                      "type": "string"
+                    },
+                    "reporter": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "username": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "username"
+                      ]
+                    },
+                    "assignee": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "username": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "username"
+                      ]
+                    },
+                    "category": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name"
+                      ]
+                    },
+                    "priority": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "color": {
+                          "type": "string"
+                        },
+                        "default": {
+                          "type": "boolean"
+                        },
+                        "order": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "color",
+                        "default",
+                        "order"
+                      ]
+                    },
+                    "status": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "color": {
+                          "type": "string"
+                        },
+                        "order": {
+                          "type": "integer"
+                        },
+                        "treatAsClosed": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "color",
+                        "order",
+                        "treatAsClosed"
+                      ]
+                    },
+                    "type": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "icon": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "name",
+                        "icon"
+                      ]
+                    },
+                    "milestone": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "parentId": {
+                          "type": "null"
+                        },
+                        "guid": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "startDate": {
+                          "type": "string"
+                        },
+                        "endDate": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "responsibleUserId": {
+                          "type": "integer"
+                        },
+                        "estimatedTime": {
+                          "type": "integer"
+                        },
+                        "status": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "parentId",
+                        "guid",
+                        "name",
+                        "startDate",
+                        "endDate",
+                        "description",
+                        "responsibleUserId",
+                        "estimatedTime",
+                        "status"
+                      ]
+                    },
+                    "startDate": {
+                      "type": "null"
+                    },
+                    "endDate": {
+                      "type": "null"
+                    },
+                    "tags": {
+                      "type": "string"
+                    },
+                    "updated": {
+                      "type": "string"
+                    },
+                    "created": {
+                      "type": "string"
+                    },
+                    "estimatedTime": {
+                      "type": "null"
+                    },
+                    "spentTime": {
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "summary",
+                    "reporter",
+                    "assignee",
+                    "category",
+                    "priority",
+                    "status",
+                    "type",
+                    "milestone",
+                    "startDate",
+                    "endDate",
+                    "tags",
+                    "updated",
+                    "created",
+                    "estimatedTime",
+                    "spentTime"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/{project}/ticket/{ticket}/comments": {
+      "get": {
+        "summary": "Ticket comments",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "ki-profile",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ticket",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "3446",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "description": "",
+            "example": "{{api_key}}",
+            "schema": {
+              "type": "string",
+              "default": "{{api_key}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "content": {
+                        "type": "string"
+                      },
+                      "private": {
+                        "type": "null"
+                      }
+                    },
+                    "required": [
+                      "content",
+                      "private"
+                    ]
+                  }
+                }
+              }
+            },
+            "headers": {}
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/{project}/ticket/{ticket}/context": {
+      "get": {
+        "summary": "Ticket context",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "ki-profile",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ticket",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "3446",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "description": "",
+            "example": "{{api_key}}",
+            "schema": {
+              "type": "string",
+              "default": "{{api_key}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ticket": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "summary": {
+                          "type": "string"
+                        },
+                        "reporter": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "username": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "username"
+                          ]
+                        },
+                        "assignee": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "username": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "username"
+                          ]
+                        },
+                        "category": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name"
+                          ]
+                        },
+                        "priority": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "color": {
+                              "type": "string"
+                            },
+                            "default": {
+                              "type": "boolean"
+                            },
+                            "order": {
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "color",
+                            "default",
+                            "order"
+                          ]
+                        },
+                        "status": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "color": {
+                              "type": "string"
+                            },
+                            "order": {
+                              "type": "integer"
+                            },
+                            "treatAsClosed": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "color",
+                            "order",
+                            "treatAsClosed"
+                          ]
+                        },
+                        "type": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "icon": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name",
+                            "icon"
+                          ]
+                        },
+                        "milestone": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "parentId": {
+                              "type": "null"
+                            },
+                            "guid": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "startDate": {
+                              "type": "string"
+                            },
+                            "endDate": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "responsibleUserId": {
+                              "type": "integer"
+                            },
+                            "estimatedTime": {
+                              "type": "integer"
+                            },
+                            "status": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "parentId",
+                            "guid",
+                            "name",
+                            "startDate",
+                            "endDate",
+                            "description",
+                            "responsibleUserId",
+                            "estimatedTime",
+                            "status"
+                          ]
+                        },
+                        "startDate": {
+                          "type": "null"
+                        },
+                        "endDate": {
+                          "type": "null"
+                        },
+                        "tags": {
+                          "type": "string"
+                        },
+                        "updated": {
+                          "type": "string"
+                        },
+                        "created": {
+                          "type": "string"
+                        },
+                        "estimatedTime": {
+                          "type": "null"
+                        },
+                        "spentTime": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "summary",
+                        "reporter",
+                        "assignee",
+                        "category",
+                        "priority",
+                        "status",
+                        "type",
+                        "milestone",
+                        "startDate",
+                        "endDate",
+                        "tags",
+                        "updated",
+                        "created",
+                        "estimatedTime",
+                        "spentTime"
+                      ]
+                    },
+                    "assignments": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "company": {
+                            "type": "string"
+                          },
+                          "firstName": {
+                            "type": "string"
+                          },
+                          "lastName": {
+                            "type": "string"
+                          },
+                          "username": {
+                            "type": "string"
+                          },
+                          "email": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "company",
+                          "firstName",
+                          "lastName",
+                          "username",
+                          "email"
+                        ]
+                      }
+                    },
+                    "statuses": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "backgroundColor": {
+                            "type": "null"
+                          },
+                          "order": {
+                            "type": "integer"
+                          },
+                          "treatAsClosed": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "backgroundColor",
+                          "order",
+                          "treatAsClosed"
+                        ]
+                      }
+                    },
+                    "priorities": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "color": {
+                            "type": "string"
+                          },
+                          "default": {
+                            "type": "boolean"
+                          },
+                          "order": {
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "color",
+                          "default",
+                          "order"
+                        ]
+                      }
+                    },
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name"
+                        ]
+                      }
+                    },
+                    "types": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "icon": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "icon"
+                        ]
+                      }
+                    },
+                    "comments": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "content": {
+                            "type": "string"
+                          },
+                          "private": {
+                            "type": "null"
+                          }
+                        },
+                        "required": [
+                          "content",
+                          "private"
+                        ]
+                      }
+                    },
+                    "links": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "ticket",
+                    "assignments",
+                    "statuses",
+                    "priorities",
+                    "categories",
+                    "types",
+                    "comments",
+                    "links"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/{project}/categories": {
+      "get": {
+        "summary": "Categories",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "ki-profile",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "description": "",
+            "example": "{{api_key}}",
+            "schema": {
+              "type": "string",
+              "default": "{{api_key}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name"
+                    ]
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/{project}/priorities": {
+      "get": {
+        "summary": "Priorities",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "ki-profile",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "description": "",
+            "example": "{{api_key}}",
+            "schema": {
+              "type": "string",
+              "default": "{{api_key}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/{project}/statuses": {
+      "get": {
+        "summary": "Statuses",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "ki-profile",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "description": "",
+            "example": "{{api_key}}",
+            "schema": {
+              "type": "string",
+              "default": "{{api_key}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "backgroundColor": {
+                        "type": "null"
+                      },
+                      "order": {
+                        "type": "integer"
+                      },
+                      "treatAsClosed": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name",
+                      "backgroundColor",
+                      "order",
+                      "treatAsClosed"
+                    ]
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/{project}/types": {
+      "get": {
+        "summary": "Types",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "project",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "ki-profile",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-API-Key",
+            "in": "header",
+            "description": "",
+            "example": "{{api_key}}",
+            "schema": {
+              "type": "string",
+              "default": "{{api_key}}"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "icon": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "name",
+                      "icon"
+                    ]
+                  }
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "securitySchemes": {}
+  },
+  "servers": [],
+  "security": []
+}
