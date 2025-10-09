@@ -308,6 +308,31 @@ class ApiController extends AbstractController
     }
 
     /**
+     * Handles the group route.
+     *
+     * @return JsonResponse The response containing the group data.
+     */
+    #[Route('/groups', methods: ['GET'])]
+    public function groups(Request $request): JsonResponse
+    {
+        try {
+            $this->authorize($request);
+            $response = $this->doApiCall("/project_groups");
+            $xml = new \SimpleXMLElement($response);
+            $transformer = $this->transformerFactory->create('group');
+        }
+        catch (\Throwable $e) {
+            return $this->errorResponse($e);
+        }
+
+        $results = [];
+        foreach ($xml->{'project-group'} as $obj) {
+            $results[] = $transformer->transform((array)$obj);
+        }
+        return new JsonResponse($results);
+    }
+
+    /**
      * Extracts ticket links from the provided comments.
      *
      * @param array $comments
