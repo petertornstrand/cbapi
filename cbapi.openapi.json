@@ -19,7 +19,7 @@
             "in": "path",
             "description": "",
             "required": true,
-            "example": "ki-profile",
+            "example": "my-project",
             "schema": {
               "type": "string"
             }
@@ -278,7 +278,7 @@
             "in": "path",
             "description": "",
             "required": true,
-            "example": "ki-profile",
+            "example": "my-project",
             "schema": {
               "type": "string"
             }
@@ -544,7 +544,7 @@
             "in": "path",
             "description": "",
             "required": true,
-            "example": "ki-profile",
+            "example": "my-project",
             "schema": {
               "type": "string"
             }
@@ -632,7 +632,7 @@
             "in": "path",
             "description": "",
             "required": true,
-            "example": "ki-profile",
+            "example": "my-project",
             "schema": {
               "type": "string"
             }
@@ -1071,7 +1071,7 @@
             "in": "path",
             "description": "",
             "required": true,
-            "example": "ki-profile",
+            "example": "my-project",
             "schema": {
               "type": "string"
             }
@@ -1130,7 +1130,7 @@
             "in": "path",
             "description": "",
             "required": true,
-            "example": "ki-profile",
+            "example": "my-project",
             "schema": {
               "type": "string"
             }
@@ -1175,7 +1175,7 @@
             "in": "path",
             "description": "",
             "required": true,
-            "example": "ki-profile",
+            "example": "my-project",
             "schema": {
               "type": "string"
             }
@@ -1246,7 +1246,7 @@
             "in": "path",
             "description": "",
             "required": true,
-            "example": "ki-profile",
+            "example": "my-project",
             "schema": {
               "type": "string"
             }
