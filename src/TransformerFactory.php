@@ -9,6 +9,9 @@ use Spatie\StructureDiscoverer\Cache\FileDiscoverCacheDriver;
 use Spatie\StructureDiscoverer\Discover;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
+/**
+ * Factory class responsible for creating transformer instances.
+ */
 class TransformerFactory {
 
     protected array $transformers = [];

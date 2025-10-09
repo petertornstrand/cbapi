@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DecoratorFactory;
 use App\Exception\MissingCredentialsException;
 use App\TransformerFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,6 +25,7 @@ class ApiController extends AbstractController
     public function __construct(
         protected HttpClientInterface $client,
         protected TransformerFactory $transformerFactory,
+        protected DecoratorFactory $decoratorFactory,
     ) {
     }
 
@@ -50,8 +52,10 @@ class ApiController extends AbstractController
                 'types' => json_decode($this->types($request, $project)->getContent()),
                 'comments' => json_decode($this->comments($request, $project, $ticketId)->getContent()),
                 'links' => null,
+                'participants' => null,
             ];
             $context->links = $this->extractTicketLinks($context->comments);
+            $context->participants = $this->extractParticipants($context->comments, $context->assignments);
         }
         catch (\Throwable $e) {
             return new JsonResponse((array)$e);
@@ -127,6 +131,7 @@ class ApiController extends AbstractController
             $response = $this->doApiCall("/{$project}/assignments");
             $xml = new \SimpleXMLElement($response);
             $transformer = $this->transformerFactory->create('assignment');
+            $decorator = $this->decoratorFactory->create('assignment');
         }
         catch (\Throwable $e) {
             return $this->errorResponse($e);
@@ -134,7 +139,9 @@ class ApiController extends AbstractController
 
         $results = [];
         foreach ($xml->user as $obj) {
-            $results[] = $transformer->transform((array)$obj);
+            $data = $transformer->transform((array)$obj);
+            $decorator->decorate($data);
+            $results[] = $data;
         }
         return new JsonResponse($results);
     }
@@ -275,6 +282,32 @@ class ApiController extends AbstractController
     }
 
     /**
+     * Handles the project route for a specified project.
+     *
+     * @param string $project The project identifier.
+     *
+     * @return JsonResponse The response containing the project data.
+     */
+    #[Route('/{project}', methods: ['GET'])]
+    public function project(Request $request, string $project): JsonResponse
+    {
+        try {
+            $this->authorize($request);
+            $response = $this->doApiCall("/{$project}");
+            $xml = new \SimpleXMLElement($response);
+            $transformer = $this->transformerFactory->create('project');
+            $decorator = $this->decoratorFactory->create('project');
+        }
+        catch (\Throwable $e) {
+            return $this->errorResponse($e);
+        }
+
+        $project = $transformer->transform((array)$xml->project[0]);
+        $decorator->decorate($project);
+        return new JsonResponse($project);
+    }
+
+    /**
      * Extracts ticket links from the provided comments.
      *
      * @param array $comments
@@ -282,6 +315,28 @@ class ApiController extends AbstractController
      */
     protected function extractTicketLinks(array $comments): array {
         return [];
+    }
+
+    /**
+     * Extracts participants from the provided comments.
+     *
+     * @param array $comments
+     * @param array $assignments
+     * @return array
+     */
+    protected function extractParticipants(array $comments, array $assignments): array {
+        $ids = [];
+        array_walk($comments, function ($comment) use (&$ids) {
+            if (!array_key_exists($comment->userId, $ids)) {
+                $ids[$comment->userId] = $comment->userId;
+            }
+        });
+
+        $participants = array_filter($assignments, function ($assignment) use ($ids) {
+            return array_key_exists($assignment->id, $ids);
+        });
+
+        return array_values($participants);
     }
 
     /**
@@ -362,7 +417,7 @@ class ApiController extends AbstractController
         }
 
         if ($actual !== $expected) {
-            //throw new UnauthorizedHttpException('X-API-Key realm="cbapi"', 'Invalid API key.');
+            throw new UnauthorizedHttpException('X-API-Key realm="cbapi"', 'Invalid API key.');
         }
     }
 

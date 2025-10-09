@@ -64,7 +64,7 @@ class TicketTransformer extends TransformerBase implements TransformerInterface 
             ->map('created', 'created-at', 'string')
             ->map('estimatedTime', 'estimated-time', 'nullable_int|required')
             ->map('spentTime', 'total-time-spent', 'int')
-            ->map('projectId', '.roject-id', 'int');
+            ->map('projectId', 'project-id', 'int');
         return $this->transformer->toArray((array)$data);
     }
 

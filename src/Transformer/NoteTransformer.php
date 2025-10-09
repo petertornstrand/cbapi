@@ -24,17 +24,22 @@ class NoteTransformer extends TransformerBase implements TransformerInterface {
      * @inheritDoc
      */
     public function transform(array $data): array {
-        $this->transformer->map('content', 'content', 'nullable_string|required')
-            ->map('timeAdded', 'time-added', 'int')
-            ->map('changes.status', 'changes.status-id', 'int')
-            ->map('changes.priority', 'changes.priority-id', 'int')
-            ->map('changes.category', 'changes.category-id', 'int')
-            ->map('changes.assignee', 'changes.assignee-id', 'int')
-            ->map('changes.milestone', 'changes.milestone-id', 'int')
-            ->map('changes.subject', 'changes.subject', 'string')
-            ->map('uploadTokens', 'upload-tokens.upload-token', 'array')
-            ->map('private', 'private', 'int|required')
-            ;
+        $this->transformer->set('attachments', [])->rule()->array();
+        $this->transformer->map('id', 'id', 'int|required')
+            ->map('userId', 'user-id', 'int|required')
+            ->map('created', 'created-at', 'string|required')
+            ->map('updated', 'updated-at', 'string')
+            ->map('content', 'content', 'nullable_string|required')
+            ->map('updates', 'updates', 'string|required')
+            ->map('companyId', 'company-id', 'nullable_int|required')
+            ->map('timeAdded', 'time-added', 'int') // TODO: Does this really exist?
+            ->map('attachments.attachment.id', 'attachments.attachment.id', 'int')
+            ->map('attachments.attachment.guid', 'attachments.attachment.identifier', 'string')
+            ->map('attachments.attachment.filename', 'attachments.attachment.file-name', 'string')
+            ->map('attachments.attachment.contentType', 'attachments.attachment.content-type', 'string')
+            ->map('attachments.attachment.fileSize', 'attachments.attachment.file-size', 'int')
+            ->map('attachments.attachment.url', 'attachments.attachment.url', 'string')
+            ->map('private', 'private', 'int');
         return $this->transformer->toArray((array)$data);
     }
 
