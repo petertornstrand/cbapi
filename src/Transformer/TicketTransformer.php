@@ -59,12 +59,12 @@ class TicketTransformer extends TransformerBase implements TransformerInterface 
             ->map('milestone.status', 'milestone.status', 'string')
             ->map('startDate', 'start-on', 'nullable_string|required')
             ->map('endDate', 'deadline', 'nullable_string|required')
-            ->map('tags', 'tags', 'nullable_string|required')
             ->map('updated', 'updated-at', 'string')
             ->map('created', 'created-at', 'string')
             ->map('estimatedTime', 'estimated-time', 'nullable_int|required')
             ->map('spentTime', 'total-time-spent', 'int')
             ->map('projectId', 'project-id', 'int');
+        $this->transformer->map('tags', 'tags', $this->transformer->rule()->callback(fn($value) => explode(' ', $value)));
         return $this->transformer->toArray((array)$data);
     }
 
