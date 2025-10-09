@@ -288,7 +288,7 @@ class ApiController extends AbstractController
      *
      * @return JsonResponse The response containing the project data.
      */
-    #[Route('/{project}', methods: ['GET'])]
+    #[Route('/{project}', methods: ['GET'], condition: "params['project'] != 'groups'")]
     public function project(Request $request, string $project): JsonResponse
     {
         try {
