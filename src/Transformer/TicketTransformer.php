@@ -27,7 +27,7 @@ class TicketTransformer extends TransformerBase implements TransformerInterface 
      */
     public function transform(array $data): array {
         $this->transformer->map('id', 'ticket-id', 'int')
-            ->map('summary', 'summary', 'string')
+            ->map('subject', 'summary', 'string')
             ->map('reporter.id', 'reporter-id', 'int')
             ->map('reporter.username', 'reporter', 'string')
             ->map('assignee.id', 'assignee-id', 'int')
@@ -48,7 +48,7 @@ class TicketTransformer extends TransformerBase implements TransformerInterface 
             ->map('type.name', 'type.name', 'string')
             ->map('type.icon', 'type.icon', 'string')
             ->map('milestone.id', 'milestone.id', 'int')
-            ->map('milestone.parentId', 'milestone.parent-id', 'nullable_int|required')
+            ->map('milestone.parentId', 'milestone.parent-id', 'nullable_int')
             ->map('milestone.guid', 'milestone.identifier', 'string')
             ->map('milestone.name', 'milestone.name', 'string')
             ->map('milestone.startDate', 'milestone.start-at', 'string')
@@ -64,7 +64,8 @@ class TicketTransformer extends TransformerBase implements TransformerInterface 
             ->map('estimatedTime', 'estimated-time', 'nullable_int|required')
             ->map('spentTime', 'total-time-spent', 'int')
             ->map('projectId', 'project-id', 'int');
-        $this->transformer->map('tags', 'tags', $this->transformer->rule()->callback(fn($value) => explode(' ', $value)));
+        $tags = $data['tags'] ? explode(' ', $data['tags']) : null;
+        $this->transformer->set('tags', $tags);
         return $this->transformer->toArray((array)$data);
     }
 

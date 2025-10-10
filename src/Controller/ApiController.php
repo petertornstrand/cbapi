@@ -7,6 +7,7 @@ use App\Exception\MissingCredentialsException;
 use App\TransformerFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -93,15 +94,21 @@ class ApiController extends AbstractController
      * Handles the ticket retrieval for a specified project.
      *
      * @param string $project The project identifier.
+     * @param int $page The page number for pagination.
+     * @param string|null $query The search query.
      *
      * @return JsonResponse A JSON response containing the transformed ticket data.
      */
     #[Route('/{project}/tickets', methods: ['GET'])]
-    public function tickets(Request $request, string $project, #[MapQueryParameter] int $page = 1): JsonResponse
+    public function tickets(Request $request, string $project, #[MapQueryParameter(name: "page")] int $page = 1, #[MapQueryParameter(name: "query")] ?string $query = null): JsonResponse
     {
         try {
             $this->authorize($request);
-            $response = $this->doApiCall("/{$project}/tickets", ['page' => $page]);
+            $params = ['page' => $page];
+            if ($query) {
+                $params['query'] = urlencode($query);
+            }
+            $response = $this->doApiCall("/{$project}/tickets", $params);
             $xml = new \SimpleXMLElement($response);
             $transformer = $this->transformerFactory->create('ticket');
         }
@@ -339,7 +346,17 @@ class ApiController extends AbstractController
      * @return array
      */
     protected function extractTicketLinks(array $comments): array {
-        return [];
+        $tickets = [];
+        foreach ($comments as $comment) {
+            $matches = [];
+            preg_match_all('/\s+#(\d+)/', $comment->content, $matches);
+            if (!empty($matches[1])) {
+                foreach ($matches[1] as $match) {
+                    $tickets[] = $match;
+                }
+            }
+        }
+        return $tickets;
     }
 
     /**

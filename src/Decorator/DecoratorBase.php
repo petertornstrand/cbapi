@@ -64,7 +64,13 @@ abstract class DecoratorBase implements DecoratorInterface
      * Gets the decoration data for the given ID.
      */
     protected function getDecorationTemplate(): ?array {
-        return $this->getDecoration('template');
+        $template = $this->getDecoration('template');
+        foreach ($template as $key => $value) {
+            if (str_starts_with($value, '_')) {
+                unset($template[$key]);
+            }
+        }
+        return $template;
     }
 
 }
