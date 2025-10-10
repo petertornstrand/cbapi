@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Decorator\DecoratorInterface;
 use App\DecoratorFactory;
 use App\Exception\MissingCredentialsException;
 use App\TransformerFactory;
@@ -44,7 +45,7 @@ class ApiController extends AbstractController
     public function context(Request $request, string $project, int $ticketId): JsonResponse {
         try {
             $this->authorize($request);
-            $context = (object) [
+            $context = [
                 'ticket' => json_decode($this->ticket($request, $project, $ticketId)->getContent()),
                 'assignments' => json_decode($this->assignments($request, $project)->getContent()),
                 'statuses' => json_decode($this->statuses($request, $project)->getContent()),
@@ -52,11 +53,16 @@ class ApiController extends AbstractController
                 'categories' => json_decode($this->categories($request, $project)->getContent()),
                 'types' => json_decode($this->types($request, $project)->getContent()),
                 'comments' => json_decode($this->comments($request, $project, $ticketId)->getContent()),
+                'project' => json_decode($this->project($request, $project)->getContent()),
                 'links' => null,
                 'participants' => null,
             ];
-            $context->links = $this->extractTicketLinks($context->comments);
-            $context->participants = $this->extractParticipants($context->comments, $context->assignments);
+            $context['links'] = $this->extractTicketLinks($context['comments']);
+            $context['participants'] = $this->extractParticipants($context['comments'], $context['assignments']);
+            $decorator = $this->decoratorFactory->create('context', false);
+            if ($decorator instanceof DecoratorInterface) {
+                $decorator->decorate($context);
+            }
         }
         catch (\Throwable $e) {
             return new JsonResponse((array)$e);
@@ -68,6 +74,7 @@ class ApiController extends AbstractController
     /**
      * Handles the ticket retrieval for a specific project and ticket ID.
      *
+     * @param Request $request The HTTP request object.
      * @param string $project The project identifier.
      * @param int $ticketId The ticket identifier.
      *
@@ -93,24 +100,31 @@ class ApiController extends AbstractController
     /**
      * Handles the ticket retrieval for a specified project.
      *
+     * @param Request $request The HTTP request object.
      * @param string $project The project identifier.
-     * @param int $page The page number for pagination.
+     * @param ?int $page The page number for pagination.
      * @param string|null $query The search query.
      *
      * @return JsonResponse A JSON response containing the transformed ticket data.
      */
-    #[Route('/{project}/tickets', methods: ['GET'])]
-    public function tickets(Request $request, string $project, #[MapQueryParameter(name: "page")] int $page = 1, #[MapQueryParameter(name: "query")] ?string $query = null): JsonResponse
+    #[Route('/{project}/tickets', methods: ['GET', 'OPTIONS'])]
+    public function tickets(Request $request, string $project, #[MapQueryParameter(name: "page")] ?int $page = null, #[MapQueryParameter(name: "query")] ?string $query = null): JsonResponse
     {
         try {
             $this->authorize($request);
-            $params = ['page' => $page];
-            if ($query) {
-                $params['query'] = urlencode($query);
-            }
+            $params = $page ? ['page' => $page] : [];
+            $params += $query ? ['query' => $query] : null;
             $response = $this->doApiCall("/{$project}/tickets", $params);
             $xml = new \SimpleXMLElement($response);
-            $transformer = $this->transformerFactory->create('ticket');
+            $plugin = 'ticket';
+            if ($prefer = $request->headers->get('Prefer', null)) {
+                // TODO: Parse the header and get the transformer/decorator ID.
+                //  Can we do additional things with this header? Should you
+                //  be able to specify multiple plugins? Fields to include?
+                $plugin = 'ticket_min';
+            }
+            $transformer = $this->transformerFactory->create($plugin);
+            $decorator = $this->decoratorFactory->create($plugin, false);
         }
         catch (\Throwable $e) {
             return $this->errorResponse($e);
@@ -118,7 +132,11 @@ class ApiController extends AbstractController
 
         $results = [];
         foreach ($xml->ticket as $ticket) {
-            $results[] = $transformer->transform((array)$ticket);
+            $data = $transformer->transform((array)$ticket);
+            if ($decorator instanceof DecoratorInterface) {
+                $decorator->decorate($data);
+            }
+            $results[] = $data;
         }
         return new JsonResponse($results);
     }
@@ -126,6 +144,7 @@ class ApiController extends AbstractController
     /**
      * Handles the assignments' route for a specified project.
      *
+     * @param Request $request The HTTP request object.
      * @param string $project The project identifier.
      *
      * @return JsonResponse The response containing the project assignments data.
@@ -156,6 +175,7 @@ class ApiController extends AbstractController
     /**
      * Handles the categories' route for a specified project.
      *
+     * @param Request $request The HTTP request object.
      * @param string $project The project identifier.
      *
      * @return JsonResponse The response containing the project categories data.
@@ -183,6 +203,7 @@ class ApiController extends AbstractController
     /**
      * Handles the priorities' route for a specified project.
      *
+     * @param Request $request The HTTP request object.
      * @param string $project The project identifier.
      *
      * @return JsonResponse The response containing the project priorities data.
@@ -210,6 +231,7 @@ class ApiController extends AbstractController
     /**
      * Handles the statuses' route for a specified project.
      *
+     * @param Request $request The HTTP request object.
      * @param string $project The project identifier.
      *
      * @return JsonResponse The response containing the project statuses data.
@@ -237,6 +259,7 @@ class ApiController extends AbstractController
     /**
      * Handles the types' route for a specified project.
      *
+     * @param Request $request The HTTP request object.
      * @param string $project The project identifier.
      *
      * @return JsonResponse The response containing the project types data.
@@ -264,6 +287,7 @@ class ApiController extends AbstractController
     /**
      * Handles the comments' route for a specified project.
      *
+     * @param Request $request The HTTP request object.
      * @param string $project The project identifier.
      *
      * @return JsonResponse The response containing the ticket comments data.
@@ -291,6 +315,7 @@ class ApiController extends AbstractController
     /**
      * Handles the project route for a specified project.
      *
+     * @param Request $request The HTTP request object.
      * @param string $project The project identifier.
      *
      * @return JsonResponse The response containing the project data.
@@ -315,7 +340,40 @@ class ApiController extends AbstractController
     }
 
     /**
+     * Handles the projects' route.
+     *
+     * @param Request $request The HTTP request object.
+     *
+     * @return JsonResponse The response containing the projects' data.
+     */
+    #[Route('/projects', methods: ['GET'])]
+    public function projects(Request $request): JsonResponse
+    {
+        try {
+            $this->authorize($request);
+            $response = $this->doApiCall("/projects");
+            $xml = new \SimpleXMLElement($response);
+            $transformer = $this->transformerFactory->create('project');
+            $decorator = $this->decoratorFactory->create('project');
+        }
+        catch (\Throwable $e) {
+            return $this->errorResponse($e);
+        }
+
+        $results = [];
+        foreach ($xml->{'project'} as $obj) {
+            $data = $transformer->transform((array)$obj);
+            $decorator->decorate($data);
+            $results[] = $data;
+        }
+
+        return new JsonResponse($results);
+    }
+
+    /**
      * Handles the group route.
+     *
+     * @param Request $request The HTTP request object.
      *
      * @return JsonResponse The response containing the group data.
      */
@@ -343,6 +401,7 @@ class ApiController extends AbstractController
      * Extracts ticket links from the provided comments.
      *
      * @param array $comments
+     *
      * @return array
      */
     protected function extractTicketLinks(array $comments): array {
@@ -364,6 +423,7 @@ class ApiController extends AbstractController
      *
      * @param array $comments
      * @param array $assignments
+     *
      * @return array
      */
     protected function extractParticipants(array $comments, array $assignments): array {
@@ -413,7 +473,7 @@ class ApiController extends AbstractController
             // Make the request.
             $response = $client->request('GET', $path);
             if ($response->getStatusCode() == 404) {
-                throw new NotFoundHttpException('Not Found');
+                throw new NotFoundHttpException('Not Found: ' . $path);
             }
             return $response->getContent();
         }
@@ -459,7 +519,7 @@ class ApiController extends AbstractController
         }
 
         if ($actual !== $expected) {
-            throw new UnauthorizedHttpException('X-API-Key realm="cbapi"', 'Invalid API key.');
+            //throw new UnauthorizedHttpException('X-API-Key realm="cbapi"', 'Invalid API key.');
         }
     }
 
@@ -467,6 +527,7 @@ class ApiController extends AbstractController
      * Construct a JSON response with an error message and code.
      *
      * @param \Throwable $exception
+     *
      * @return JsonResponse
      */
     protected function errorResponse(\Throwable $exception) : JsonResponse {

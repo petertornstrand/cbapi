@@ -2,6 +2,7 @@
 
 namespace App\Decorator;
 
+use App\Service\Twig;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -20,7 +21,8 @@ abstract class DecoratorBase implements DecoratorInterface
         protected string $name,
         #[Autowire('%kernel.project_dir%')] protected string $directory,
         #[Autowire('%kernel.environment%')] protected string $environment,
-        protected FileSystem $fileSystem
+        protected FileSystem $fileSystem,
+        protected Twig $twig
     ) {
         $this->initDecoration($this->name);
     }

@@ -9,6 +9,6 @@ nelmio_cors:
     paths:
         '^/':
             allow_origin: [ '*' ]
-            allow_headers: [ 'X-API-Key', 'Accept', 'Content-Type', 'Authorization' ]
-            allow_methods: [ 'GET' ]
+            allow_headers: [ 'X-API-Key', 'Accept', 'Content-Type', 'Authorization', 'Prefer' ]
+            allow_methods: [ 'GET', 'OPTIONS' ]
             max_age: 3600

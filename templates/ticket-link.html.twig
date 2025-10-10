@@ -1,0 +1,24 @@
+{#
+/**
+ * @file
+ * Template for ticket link.
+ *
+ * Available variables:
+ * - {int} id               The ticket ID.
+ * - {string} subject       The ticket subject.
+ * - {int|null} assigneeId  The assignee ID.
+ * - {string} statusName    The status name, example: "Test".
+ * - {string} statusColor   The status color, example: "purple".
+ * - {string} typeName      The type name, example: "Bug".
+ * - {string} typeIcon      The type icon, example: "bug".
+ * - {string} created       The created date/time, example "2025-10-01T12:27:48Z".
+ */
+#}
+{% set title = '"' ~ typeName ~ '" created on "' ~ created|date('M j, Y') ~ '" with status "' ~ statusName ~ '"' %}
+{% set classes = [
+    'TicketLink',
+    'is-status-' ~ statusName|lower|replace({':': '', '-': '', ' ': '-'})
+] %}
+<a href="#{{ id }}" class="{{ classes|join(' ') }}" data-id="{{ id }}" rel="codebase-internal" title="{{ title|e }}">
+    <span class="TicketLink__id">#{{ id }}</span> <span class="TicketLink__subject">{{ subject }}</span>
+</a>

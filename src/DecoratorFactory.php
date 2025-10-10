@@ -4,6 +4,7 @@ namespace App;
 
 use App\Attribute\Decorator;
 use App\Decorator\DecoratorInterface;
+use App\Service\Twig;
 use Spatie\StructureDiscoverer\Cache\FileDiscoverCacheDriver;
 use Spatie\StructureDiscoverer\Discover;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -22,7 +23,8 @@ class DecoratorFactory {
     public function __construct(
         #[Autowire('%kernel.project_dir%')] protected string $directory,
         #[Autowire('%kernel.environment%')] protected string $environment,
-        protected FileSystem $fileSystem
+        protected FileSystem $fileSystem,
+        protected Twig $twig,
     ) {
         $this->discover();
     }
@@ -57,15 +59,18 @@ class DecoratorFactory {
      *
      * @throws \InvalidArgumentException If the decorator is not found.
      */
-    public function create(string $decorator): DecoratorInterface {
+    public function create(string $decorator, bool $throw = true): ?DecoratorInterface {
         if (!isset($this->decorators[$decorator])) {
-            throw new \InvalidArgumentException(sprintf('Decorator "%s" not found.', $decorator));
+            if ($throw) {
+                throw new \InvalidArgumentException(sprintf('Decorator "%s" not found.', $decorator));
+            }
+            return null;
         }
         $class = $this->decorators[$decorator];
         if ($class instanceof DecoratorInterface) {
             return $class;
         }
-        return new $class($decorator, $this->directory, $this->environment, $this->fileSystem);
+        return new $class($decorator, $this->directory, $this->environment, $this->fileSystem, $this->twig);
     }
 
 }
