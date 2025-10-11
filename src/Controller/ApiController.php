@@ -32,6 +32,37 @@ class ApiController extends AbstractController
     }
 
     /**
+     * Handles the activities' route for a specified project.
+     *
+     * @param Request $request The HTTP request object.
+     * @param string $project The project identifier.
+     *
+     * @return JsonResponse The response containing the activity data.
+     */
+    #[Route('/{project}/activities', methods: ['GET'])]
+    public function activities(Request $request, string $project): JsonResponse
+    {
+        try {
+            $this->authorize($request);
+            $response = $this->doApiCall("/{$project}/activity");
+            $xml = new \SimpleXMLElement($response);
+            $transformer = $this->transformerFactory->create('assignment');
+            $decorator = $this->decoratorFactory->create('assignment');
+        }
+        catch (\Throwable $e) {
+            return $this->errorResponse($e);
+        }
+
+        $results = [];
+        foreach ($xml->user as $obj) {
+            $data = $transformer->transform((array)$obj);
+            $decorator->decorate($data);
+            $results[] = $data;
+        }
+        return new JsonResponse($results);
+    }
+
+    /**
      * Handles the retrieval of context data for a specific project and
      * ticket ID.
      *
@@ -82,20 +113,31 @@ class ApiController extends AbstractController
      *
      * @return JsonResponse The transformed ticket data in JSON format.
      */
-    #[Route('/{project}/ticket/{ticketId}', methods: ['GET'], condition: "params['ticketId'] > 0")]
+    #[Route('/{project}/ticket/{ticketId}', methods: ['GET', 'OPTIONS'], condition: "params['ticketId'] > 0")]
     public function ticket(Request $request, string $project, int $ticketId): JsonResponse
     {
         try {
             $this->authorize($request);
             $response = $this->doApiCall("/{$project}/tickets?query=id:{$ticketId}");
             $xml = new \SimpleXMLElement($response);
-            $transformer = $this->transformerFactory->create('ticket');
+            $plugin = 'ticket';
+            if ($prefer = $request->headers->get('Prefer', null)) {
+                // TODO: Parse the header and get the transformer/decorator ID.
+                //  Can we do additional things with this header? Should you
+                //  be able to specify multiple plugins? Fields to include?
+                $plugin = 'ticket_min';
+            }
+            $transformer = $this->transformerFactory->create($plugin);
+            $decorator = $this->decoratorFactory->create($plugin, false);
         }
         catch (\Throwable $e) {
             return $this->errorResponse($e);
         }
 
         $ticket = $transformer->transform((array)$xml->ticket[0]);
+        if ($decorator instanceof DecoratorInterface) {
+            $decorator->decorate($ticket);
+        }
         return new JsonResponse($ticket);
     }
 
