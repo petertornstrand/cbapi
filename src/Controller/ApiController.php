@@ -54,10 +54,11 @@ class ApiController extends AbstractController
                 'types' => json_decode($this->types($request, $project)->getContent()),
                 'comments' => json_decode($this->comments($request, $project, $ticketId)->getContent()),
                 'project' => json_decode($this->project($request, $project)->getContent()),
-                'links' => null,
+                'referencedTickets' => null,
                 'participants' => null,
+                'commits' => null,
             ];
-            $context['links'] = $this->extractTicketLinks($context['comments']);
+            $context['referencedTickets'] = $this->extractTicketLinks($context['comments']);
             $context['participants'] = $this->extractParticipants($context['comments'], $context['assignments']);
             $decorator = $this->decoratorFactory->create('context', false);
             if ($decorator instanceof DecoratorInterface) {
@@ -400,22 +401,24 @@ class ApiController extends AbstractController
     /**
      * Extracts ticket links from the provided comments.
      *
+     * @param Request $request
      * @param array $comments
      *
      * @return array
      */
-    protected function extractTicketLinks(array $comments): array {
-        $tickets = [];
+    protected function extractTicketLinks(Request $request, array $comments): array {
+        $ticketIds = [];
         foreach ($comments as $comment) {
             $matches = [];
             preg_match_all('/\s+#(\d+)/', $comment->content, $matches);
             if (!empty($matches[1])) {
                 foreach ($matches[1] as $match) {
-                    $tickets[] = $match;
+                    $ticketIds[] = $match;
                 }
             }
         }
-        return $tickets;
+
+        return $ticketIds;
     }
 
     /**
