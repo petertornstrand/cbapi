@@ -406,7 +406,7 @@ class ApiController extends AbstractController
         $ticketIds = [];
         foreach ($comments as $comment) {
             $matches = [];
-            preg_match_all('/\s+#(\d+)/', $comment->content, $matches);
+            preg_match_all('/[^\S\r\n]+#(\d+)/', $comment->content, $matches);
             if (!empty($matches[1])) {
                 foreach ($matches[1] as $match) {
                     $ticketIds[$match] = 'id:' . $match;
