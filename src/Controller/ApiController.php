@@ -46,6 +46,7 @@ class ApiController extends AbstractController
         try {
             $this->authorize($request);
             $context = [
+                'id' => $ticketId,
                 'ticket' => json_decode($this->ticket($request, $project, $ticketId)->getContent()),
                 'assignments' => json_decode($this->assignments($request, $project)->getContent()),
                 'statuses' => json_decode($this->statuses($request, $project)->getContent()),
@@ -58,7 +59,7 @@ class ApiController extends AbstractController
                 'participants' => null,
                 'commits' => null,
             ];
-            $context['referencedTickets'] = $this->extractTicketLinks($context['comments']);
+            $context['referencedTickets'] = $this->extractTicketReferences($project, $context['comments']);
             $context['participants'] = $this->extractParticipants($context['comments'], $context['assignments']);
             $decorator = $this->decoratorFactory->create('context', false);
             if ($decorator instanceof DecoratorInterface) {
@@ -399,26 +400,34 @@ class ApiController extends AbstractController
     }
 
     /**
-     * Extracts ticket links from the provided comments.
-     *
-     * @param Request $request
-     * @param array $comments
-     *
-     * @return array
+     * Extracts ticket references from the provided comments.
      */
-    protected function extractTicketLinks(Request $request, array $comments): array {
+    protected function extractTicketReferences(string $projectId, array $comments): array {
         $ticketIds = [];
         foreach ($comments as $comment) {
             $matches = [];
             preg_match_all('/\s+#(\d+)/', $comment->content, $matches);
             if (!empty($matches[1])) {
                 foreach ($matches[1] as $match) {
-                    $ticketIds[] = $match;
+                    $ticketIds[$match] = 'id:' . $match;
                 }
             }
         }
 
-        return $ticketIds;
+        $params = ['query' => implode('+', $ticketIds)];
+        $response = $this->doApiCall("/{$projectId}/tickets", $params);
+        $xml = new \SimpleXMLElement($response);
+        $transformer = $this->transformerFactory->create('ticket_min');
+        $decorator = $this->decoratorFactory->create('ticket_min');
+
+        $results = [];
+        foreach ($xml->ticket as $ticket) {
+            $data = $transformer->transform((array)$ticket);
+            $decorator->decorate($data);
+            $results[] = $data;
+        }
+
+        return $results;
     }
 
     /**
