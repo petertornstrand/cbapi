@@ -456,6 +456,11 @@ class ApiController extends AbstractController
             }
         }
 
+        // No references: don't ask Codebase, an empty query returns the latest tickets.
+        if (empty($ticketIds)) {
+            return [];
+        }
+
         $params = ['query' => implode('+', $ticketIds)];
         $response = $this->doApiCall("/{$projectId}/tickets", $params);
         $xml = new \SimpleXMLElement($response);
