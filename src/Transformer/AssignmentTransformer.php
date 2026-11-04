@@ -32,7 +32,7 @@ class AssignmentTransformer extends TransformerBase implements TransformerInterf
             ->map('email', 'email-address', 'string|required');
         $fullName = $data['first-name'] . ' ' . $data['last-name'];
         $this->transformer->set('fullName', $fullName);
-        $initials = substr($data['first-name'], 0, 1) . substr($data['last-name'], 0, 1);
+        $initials = mb_substr($data['first-name'], 0, 1) . mb_substr($data['last-name'], 0, 1);
         $this->transformer->set('initials', $initials);
         return $this->transformer->toArray((array)$data);
     }
